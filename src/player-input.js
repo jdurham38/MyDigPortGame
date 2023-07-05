@@ -43,42 +43,49 @@ export const player_input = (() => {
       this._keys.click = true;
     }
   
+
     _onMouseUp(event) {
-      const rect = document.getElementById('threejs').getBoundingClientRect();
-      const pos = {
-        x: ((event.clientX - rect.left) / rect.width) * 2  - 1,
-        y: ((event.clientY - rect.top ) / rect.height) * -2 + 1,
-      };
-
-      this._raycaster.setFromCamera(pos, this._params.camera);
-
-      const pickables = this._parent._parent.Filter((e) => {
-        const p = e.GetComponent('PickableComponent');
-        if (!p) {
-          return false;
-        }
-        return e._mesh;
-      });
-
-      const ray = new THREE.Ray();
-      ray.origin.setFromMatrixPosition(this._params.camera.matrixWorld);
-      ray.direction.set(pos.x, pos.y, 0.5).unproject(
+      // Check if the click event has already been processed
+      if (!this._keys.click) {
+        const rect = document.getElementById('threejs').getBoundingClientRect();
+        const pos = {
+          x: ((event.clientX - rect.left) / rect.width) * 2 - 1,
+          y: ((event.clientY - rect.top) / rect.height) * -2 + 1,
+        };
+  
+        this._raycaster.setFromCamera(pos, this._params.camera);
+  
+        const pickables = this._parent._parent.Filter((e) => {
+          const p = e.GetComponent('PickableComponent');
+          if (!p) {
+            return false;
+          }
+          return e._mesh;
+        });
+  
+        const ray = new THREE.Ray();
+        ray.origin.setFromMatrixPosition(this._params.camera.matrixWorld);
+        ray.direction.set(pos.x, pos.y, 0.5).unproject(
           this._params.camera).sub(ray.origin).normalize();
-
-      // hack
-      document.getElementById('quest-ui').style.visibility = 'hidden';
-
-      for (let p of pickables) {
-        // GOOD ENOUGH
-        const box = new THREE.Box3().setFromObject(p._mesh);
-
-        if (ray.intersectsBox(box)) {
-          p.Broadcast({
+  
+        // hack
+        document.getElementById('quest-ui').style.visibility = 'hidden';
+  
+        for (let p of pickables) {
+          // GOOD ENOUGH
+          const box = new THREE.Box3().setFromObject(p._mesh);
+  
+          if (ray.intersectsBox(box)) {
+            p.Broadcast({
               topic: 'input.picked'
-          });
-          break;
+            });
+            break;
+          }
         }
       }
+  
+      // Reset the click key to prevent repeated processing
+      this._keys.click = false;
     }
 
     _onKeyDown(event) {
