@@ -68,7 +68,6 @@ export const player_input = (() => {
         let attackActionTriggered = false;
     
         for (let p of pickables) {
-          // GOOD ENOUGH
           const box = new THREE.Box3().setFromObject(p._mesh);
     
           if (ray.intersectsBox(box)) {
@@ -78,6 +77,14 @@ export const player_input = (() => {
     
             // Trigger attack action
             attackActionTriggered = true;
+    
+            // Add your attack action logic here
+            // For example, you can check if the player is already in the attack state
+            // If not, set the state to 'attack'
+            if (this._parent._stateMachine.CurrentState.Name !== 'attack') {
+              this._parent.SetState('attack');
+            }
+    
             break;
           }
         }
