@@ -89,6 +89,8 @@ export const player_input = (() => {
       }
     }
     
+    
+
 
     _onKeyDown(event) {
       switch (event.keyCode) {
@@ -123,7 +125,7 @@ export const player_input = (() => {
           break;
         case 68: // d
           this._keys.right = false;
-          break;a
+          break;
         case 16: // SHIFT
           this._keys.shift = false;
           break;
