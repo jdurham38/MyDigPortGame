@@ -4,7 +4,13 @@ import {entity} from "./entity.js";
 export const quest_component = (() => {
 
   const _TITLE = 'Welcome Adventurer!';
-  const _TEXT = `Welcome to Honeywood adventurer, I see you're the chosen one and also the dragon born and whatever else, you're going to save the world! Also bring the rings back to mordor and defeat the evil dragon, and all the other things. But first, I must test you with some meaningless bullshit tasks that every rpg makes you do to waste time. Go kill like uh 30 ghosts and collect their eyeballs or something. Also go get my drycleaning and pick up my kids from daycare.`;
+  const _TEXT = `Welcome to DurhamVille adventurer, please make your way to...
+  wait... are you the new mayor replacing Josh Durham? I'm sorry I did not realize it was you.
+  Well in this case, Mr. Josh has assigned me to have you complete a couple tasks to learn more about him.
+  Lets see here.... where is it... AH here it is, okay so it says here that you must kill 10 purple vampire bats
+  and you shall recieve your first piece of knowledge, there are three pieces in total. Come back
+  to me once you have completed this! Good Luck... don't die, we're really excited to have you here and we would hate to see
+  you leave so soon. `;
 
   class QuestComponent extends entity.Component {
     constructor() {
