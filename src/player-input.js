@@ -39,65 +39,47 @@ export const player_input = (() => {
     }
 
     _onClick(event) {
-      if (!this._keys.click) {
-        // Set the 'click' key to true
-        this._keys.click = true;
-    
-        const rect = document.getElementById('threejs').getBoundingClientRect();
-        const pos = {
-          x: ((event.clientX - rect.left) / rect.width) * 2 - 1,
-          y: ((event.clientY - rect.top) / rect.height) * -2 + 1,
-        };
-    
-        this._raycaster.setFromCamera(pos, this._params.camera);
-    
-        const pickables = this._parent._parent.Filter((e) => {
-          const p = e.GetComponent('PickableComponent');
-          if (!p) {
-            return false;
-          }
-          return e._mesh;
-        });
-    
-        const ray = new THREE.Ray();
-        ray.origin.setFromMatrixPosition(this._params.camera.matrixWorld);
-        ray.direction.set(pos.x, pos.y, 0.5).unproject(
-          this._params.camera).sub(ray.origin).normalize();
-    
-        // Check for attack action only if the click intersects with a pickable object
-        let attackActionTriggered = false;
-    
-        for (let p of pickables) {
-          const box = new THREE.Box3().setFromObject(p._mesh);
-    
-          if (ray.intersectsBox(box)) {
-            p.Broadcast({
-              topic: 'input.picked',
-            });
-    
-            // Trigger attack action
-            attackActionTriggered = true;
-    
-            // Add your attack action logic here
-            // For example, you can check if the player is already in the attack state
-            // If not, set the state to 'attack'
-            if (this._parent._stateMachine.CurrentState.Name !== 'attack') {
-              this._parent.SetState('attack');
-            }
-    
-            break;
-          }
+      // Set the 'click' key to true
+      this._keys.click = true;
+    }
+  
+    _onMouseUp(event) {
+      const rect = document.getElementById('threejs').getBoundingClientRect();
+      const pos = {
+        x: ((event.clientX - rect.left) / rect.width) * 2  - 1,
+        y: ((event.clientY - rect.top ) / rect.height) * -2 + 1,
+      };
+
+      this._raycaster.setFromCamera(pos, this._params.camera);
+
+      const pickables = this._parent._parent.Filter((e) => {
+        const p = e.GetComponent('PickableComponent');
+        if (!p) {
+          return false;
         }
-    
-        if (!attackActionTriggered) {
-          // Reset the 'click' key if the attack action was not triggered
-          this._keys.click = false;
+        return e._mesh;
+      });
+
+      const ray = new THREE.Ray();
+      ray.origin.setFromMatrixPosition(this._params.camera.matrixWorld);
+      ray.direction.set(pos.x, pos.y, 0.5).unproject(
+          this._params.camera).sub(ray.origin).normalize();
+
+      // hack
+      document.getElementById('quest-ui').style.visibility = 'hidden';
+
+      for (let p of pickables) {
+        // GOOD ENOUGH
+        const box = new THREE.Box3().setFromObject(p._mesh);
+
+        if (ray.intersectsBox(box)) {
+          p.Broadcast({
+              topic: 'input.picked'
+          });
+          break;
         }
       }
     }
-    
-    
-
 
     _onKeyDown(event) {
       switch (event.keyCode) {
@@ -112,6 +94,9 @@ export const player_input = (() => {
           break;
         case 68: // d
           this._keys.right = true;
+          break;
+        case 32: // SPACE
+          this._keys.space = true;
           break;
         case 16: // SHIFT
           this._keys.shift = true;
@@ -132,6 +117,9 @@ export const player_input = (() => {
           break;
         case 68: // d
           this._keys.right = false;
+          break;
+        case 32: // SPACE
+          this._keys.space = false;
           break;
         case 16: // SHIFT
           this._keys.shift = false;
