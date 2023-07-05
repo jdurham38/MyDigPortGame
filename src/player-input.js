@@ -29,11 +29,18 @@ export const player_input = (() => {
         right: false,
         space: false,
         shift: false,
+        click: false, // Add a new key for click event
       };
       this._raycaster = new THREE.Raycaster();
       document.addEventListener('keydown', (e) => this._onKeyDown(e), false);
       document.addEventListener('keyup', (e) => this._onKeyUp(e), false);
       document.addEventListener('mouseup', (e) => this._onMouseUp(e), false);
+      document.addEventListener('click', (e) => this._onClick(e), false);
+    }
+
+    _onClick(event) {
+      // Set the 'click' key to true
+      this._keys.click = true;
     }
   
     _onMouseUp(event) {
@@ -88,9 +95,6 @@ export const player_input = (() => {
         case 68: // d
           this._keys.right = true;
           break;
-        case 32: // SPACE
-          this._keys.space = true;
-          break;
         case 16: // SHIFT
           this._keys.shift = true;
           break;
@@ -110,10 +114,7 @@ export const player_input = (() => {
           break;
         case 68: // d
           this._keys.right = false;
-          break;
-        case 32: // SPACE
-          this._keys.space = false;
-          break;
+          break;a
         case 16: // SHIFT
           this._keys.shift = false;
           break;
